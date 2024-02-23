@@ -73,5 +73,3 @@ Contributions to Motion Finance are welcome! If you'd like to contribute to the 
 Motion Finance is open-source software licensed under the [MIT license](./LICENSE).
 
 ---
-
-Feel free to customize the content according to your project's specific requirements, features, and guidelines. This README provides an overview of the project, instructions for getting started, documentation links, contribution guidelines, and licensing information.
