@@ -3,11 +3,11 @@ function generateToken(user){
  return jwt.sign({user},process.env.SECRET_KEY,{ expiresIn: '1h' })
 }
 
-export function sendToken(req,res,user){
+export function sendToken(req,res,user ,statusCode){
     const token = generateToken(user);
     req.session.token=token;
     // res.status(201).send({...user , token: token});
-    res.status(201).send(user)
+    res.status(statusCode).send(user)
 }
 
 export function verifyToken(req, res, next) {

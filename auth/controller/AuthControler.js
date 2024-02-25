@@ -11,7 +11,7 @@ class AuthController{
         const user = await prisma.user.create({
             data:payload
         })
-        sendToken(req, res, user);
+        sendToken(req, res, user, 201);
         // return res.json({message: "User created successfully",user})
 
       }catch(err){
@@ -19,6 +19,28 @@ class AuthController{
         console.log("Error registering",err)
         return res.status(500).json({message:"Something went wrong"})
       }
+    }
+
+    static async login(req, res){
+        try{
+            const { email, password } = req.body;
+            const user = await prisma.user.findUnique({
+                where: {
+                    email: email
+                }
+            })
+            if(!user){
+                return res.status(404).json({message:"User not found"})
+            }
+            if(!bcrypt.compareSync(password,user.password)){
+                return res.status(401).json({ message: "Invalid credentials" });
+            }
+            sendToken(req, res, user ,200);
+
+        }catch(err){
+            console.log("Error login",err)
+            res.status(500).json({message:"Something went wrong"})
+        }
     }
 }
 
