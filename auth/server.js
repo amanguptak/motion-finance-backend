@@ -2,12 +2,17 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import Routes from "./routes/index.js"
-
+import session from "express-session";
 
 const app = express();
 const PORT = process.env.PORT || 8000
 
 // Middlewares
+app.use(session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+}));
 app.use(express.json());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))

@@ -1,5 +1,6 @@
 import prisma from "../config/db.config.js";
 import bcrypt from "bcrypt"
+import { sendToken } from "../utils/token.js";
 class AuthController{
     static async register(req,res){
       try{
@@ -10,7 +11,8 @@ class AuthController{
         const user = await prisma.user.create({
             data:payload
         })
-        return res.json({message: "User created successfully",user})
+        sendToken(req, res, user);
+        // return res.json({message: "User created successfully",user})
 
       }catch(err){
         
