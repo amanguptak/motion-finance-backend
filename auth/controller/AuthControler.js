@@ -42,15 +42,19 @@ class AuthController {
 
   static async logout(req, res) {
     try {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log("Error Logging Out", err);
-          return res.status(500).json({ message: "Error logging out" });
-        }
-        return res.json({ message: "Logged out successfully" });
-      });
-    } catch (err) {
-      return res.status(500).json({ message: "Unable to log out" });
+      res
+        .clearCookie("authToken", {
+          httpOnly: true,
+          sameSite: "None",
+          secure: true, // Adjust sameSite attribute as needed
+        })
+        .status(200)
+        .json({ success: true, message: "Logged out successfully" });
+
+      // req.session.destroy();
+    } catch (error) {
+      console.error("Error logging out:", error);
+      res.status(500).json({ success: false, message: "Error logging out" });
     }
   }
 }
