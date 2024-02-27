@@ -20,22 +20,7 @@ export function sendToken(req, res, user, statusCode) {
   // // res.status(statusCode).send({...user , token: token});
 }
 
-export const verifyToken = (req, res, next) => {
-  // Get token from session cookie
-  const token = req.session.authToken;
-  if (!token) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
 
-  // Verify token
-  jwt.verify(token, process.env.SECRET_KEY, (err, decodedToken) => {
-    if (err) {
-      return res.status(403).json({ message: "Token not Valid" });
-    }
-    req.user = decodedToken;
-    next();
-  });
-};
 
 // // Yes, the function `sendToken` you provided seems correct for storing the token in the session. It generates a token using the `generateToken` function, assigns it to `req.session.token`, and then sends the user data in the response along with the specified status code.
 
