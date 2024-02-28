@@ -1,6 +1,7 @@
 import prisma from "../config/db.config.js";
 import bcrypt from "bcrypt";
 import { sendToken } from "../utils/token.js";
+import { sendOtp } from "../utils/sendOtp.js";
 class AuthController {
   static async register(req, res) {
     try {
@@ -57,6 +58,18 @@ class AuthController {
       res.status(500).json({ success: false, message: "Error logging out" });
     }
   }
+
+  static async requestOtp(req, res) {
+    try{
+      const {email , subject ,message , duration} = req.body;
+
+      const createdOtp = await sendOtp({email , subject ,message , duration})
+      res.status(200).json({ success: createdOtp})
+    }catch(error){
+      res.status(500).json({ message: "Something went wrong" });
+    }
+  }
+
 }
 
 export default AuthController;

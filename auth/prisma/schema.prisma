@@ -21,4 +21,14 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+  // Define an index for email field
+
+}
+
+model Otp {
+   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email String @unique
+  otp String
+  createdAt DateTime @default(now())
+  expiresAt DateTime @default(now())
 }
