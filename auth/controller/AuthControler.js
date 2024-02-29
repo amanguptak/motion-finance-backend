@@ -1,7 +1,7 @@
 import prisma from "../config/db.config.js";
 import bcrypt from "bcrypt";
 import { sendToken } from "../utils/token.js";
-import { sendOtp } from "../utils/sendOtp.js";
+import { sendOtp, verifyOtp } from "../utils/sendOtp.js";
 class AuthController {
   static async register(req, res) {
     try {
@@ -70,6 +70,19 @@ class AuthController {
     }
   }
 
+
+  static async verifiedOtp(req, res) {
+    try{
+      let {email ,otp} = req.body;
+      const validOtp = await verifyOtp({email ,otp});
+      res.status(200).json({
+        success:true,
+        valid : validOtp
+      })
+    }catch(error){
+      res.status(400).json({ message: error.message });
+    }
+  }
 }
 
 export default AuthController;
