@@ -9,6 +9,6 @@ router.post("/auth/login",AuthController.login)
 router.post("/auth/logout",AuthController.logout)
 router.post("/auth/otp",AuthController.requestOtp)
 router.post("/auth/verify",AuthController.verifiedOtp)
-
+router.post("/auth/reset-password",AuthController.resetPassword)
 
 export default router;

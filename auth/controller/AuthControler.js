@@ -60,26 +60,46 @@ class AuthController {
   }
 
   static async requestOtp(req, res) {
-    try{
-      const {email , subject ,message , duration} = req.body;
+    try {
+      const { email, subject, message } = req.body;
 
-      const createdOtp = await sendOtp({email , subject ,message , duration})
-      res.status(200).json({ success: createdOtp})
-    }catch(error){
-      res.status(500).json({ message: "Something went wrong" });
+      const createdOtp = await sendOtp({ email, subject, message });
+      res.status(200).json({ success: createdOtp });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
   }
 
-
   static async verifiedOtp(req, res) {
-    try{
-      let {email ,otp} = req.body;
-      const validOtp = await verifyOtp({email ,otp});
+    try {
+      let { email, otp } = req.body;
+      const validOtp = await verifyOtp({ email, otp });
       res.status(200).json({
-        success:true,
-        valid : validOtp
-      })
-    }catch(error){
+        valid: validOtp,
+      });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  static async resetPassword(req, res) {
+    try {
+      const { email, newPassword, otp } = req.body;
+      const validOtp = await verifyOtp({ email, otp });
+      if (!validOtp) {
+        throw Error("Invalid OTP ");
+      }
+      const salt = bcrypt.genSaltSync(10);
+      const updatedPassword = bcrypt.hashSync(newPassword, salt);
+      const updatedUser = await prisma.user.update({
+        where: { email: email },
+        data: { password: updatedPassword },
+      });
+      res.status(200).json({
+        user: updatedUser,
+        passwordUpdated: true,
+      });
+    } catch (error) {
       res.status(400).json({ message: error.message });
     }
   }
