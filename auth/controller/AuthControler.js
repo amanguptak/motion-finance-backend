@@ -2,8 +2,10 @@ import prisma from "../config/db.config.js";
 import bcrypt from "bcrypt";
 import { sendToken } from "../utils/token.js";
 import { sendOtp, verifyOtp } from "../utils/sendOtp.js";
+
+
 class AuthController {
-  static async register(req, res) {
+    static async register(req, res) {
     try {
       const payload = req.body;
       const salt = bcrypt.genSaltSync(10);
@@ -19,6 +21,8 @@ class AuthController {
       return res.status(500).json({ message: "Something went wrong" });
     }
   }
+
+
 
   static async login(req, res) {
     try {
@@ -41,6 +45,8 @@ class AuthController {
     }
   }
 
+
+
   static async logout(req, res) {
     try {
       res
@@ -59,16 +65,21 @@ class AuthController {
     }
   }
 
+
+
   static async requestOtp(req, res) {
     try {
-      const { email, subject, message } = req.body;
-
+      const { email } = req.body;
+      const subject = "Reset-Password OTP";
+      const message = "Hi 😀 Reset your account password with code below";
       const createdOtp = await sendOtp({ email, subject, message });
-      res.status(200).json({ success: createdOtp });
+      res.status(200).json(createdOtp);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   }
+
+
 
   static async verifiedOtp(req, res) {
     try {
@@ -82,12 +93,14 @@ class AuthController {
     }
   }
 
+
+
   static async resetPassword(req, res) {
     try {
       const { email, newPassword, otp } = req.body;
       const validOtp = await verifyOtp({ email, otp });
       if (!validOtp) {
-        throw Error("Invalid OTP ");
+        throw Error("Invalid OTP");
       }
       const salt = bcrypt.genSaltSync(10);
       const updatedPassword = bcrypt.hashSync(newPassword, salt);
@@ -95,14 +108,17 @@ class AuthController {
         where: { email: email },
         data: { password: updatedPassword },
       });
+      const { password, ...userData } = updatedUser;
       res.status(200).json({
-        user: updatedUser,
+        user: userData,
         passwordUpdated: true,
       });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
   }
+
+
 }
 
 export default AuthController;

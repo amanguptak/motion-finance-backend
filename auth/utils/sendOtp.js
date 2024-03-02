@@ -84,8 +84,23 @@ export const verifyOtp = async ({ email, otp }) => {
         throw Error("Invalid OTP");
       }
     }
+  
     return validOtp;
   } catch (err) {
     throw Error(err);
   }
 };
+
+
+export const deleteOtp = async(email)=>{
+    try{
+      
+      const deletedOtp = await prisma.otp.deleteMany({
+        where: {
+          email: email, // Specify the email address associated with the OTP
+        },
+      });
+    }catch (err) {
+      throw Error(err);
+    }
+}
