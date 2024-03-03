@@ -70,6 +70,14 @@ class AuthController {
   static async requestOtp(req, res) {
     try {
       const { email } = req.body;
+      const user = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (!user) {
+        return res.status(404).json({ message: "User not found , Please Sign-In" });
+      }
       const subject = "Reset-Password OTP";
       const message = "Hi 😀 Reset your account password with code below";
       const createdOtp = await sendOtp({ email, subject, message });
@@ -98,6 +106,14 @@ class AuthController {
   static async resetPassword(req, res) {
     try {
       const { email, newPassword, otp } = req.body;
+      // const user = await prisma.user.findUnique({
+      //   where: {
+      //     email: email,
+      //   },
+      // });
+      // if (!user) {
+      //   return res.status(404).json({ message: "User not found" });
+      // }
       const validOtp = await verifyOtp({ email, otp });
       if (!validOtp) {
         throw Error("Invalid OTP");
