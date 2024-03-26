@@ -42,7 +42,19 @@ class UserController {
         res.json({ user: user });
       } catch (err) {
         console.log("Error login", err);
-        res.status(500).json({ message: "Something went wrong" });
+        res.status(500).json({ message: error.message});
+      }
+    }
+
+    static async updateUser(req,res){
+      try{
+        if (!req.user || !req.user.email) {
+          return res.status(404).json({ message: "Email not found" });
+        }
+  
+
+      }catch(error){
+        res.status(500).json({ message: error.message});
       }
     }
   }

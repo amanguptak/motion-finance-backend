@@ -1,14 +1,18 @@
 import prisma from "../config/db.config.js";
 import { sendEmail } from "./sendEmail.js";
+import {randomInt} from "crypto"
 import bcrypt from "bcrypt";
 
 export const generateOtp = () => {
   try {
-    return `${Math.floor(1000 + Math.random() * 9000)}`;
+    const generatedOtp = randomInt(1000, 10000);
+ 
+    return generatedOtp;
   } catch (err) {
     throw err;
   }
 };
+
 
 export const sendOtp = async ({ email, subject, message, duration = 1 }) => {
   try {

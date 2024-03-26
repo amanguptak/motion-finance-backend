@@ -76,7 +76,7 @@ class AuthController {
         },
       });
       if (!user) {
-        return res.status(404).json({ message: "User not found , Please Sign-In" });
+        return res.status(404).json({ message: "User not found  Please Register" });
       }
       const subject = "Reset-Password OTP";
       const message = "Hi 😀 Reset your account password with code below";
