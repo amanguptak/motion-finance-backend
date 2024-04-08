@@ -27,7 +27,7 @@ export const sendOtp = async ({ email, subject, message, duration = 1 }) => {
       },
     });
 
-    const generatedOtp = await generateOtp();
+    const generatedOtp = await generateOtp().toString();
     const mailOptions = {
       from: process.env.ADMIN_EMAIL,
       to: email,
