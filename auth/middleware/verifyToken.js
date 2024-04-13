@@ -6,23 +6,23 @@ export const verifyToken = async (req, res, next) => {
     if (!token) {
       res.status(401).json({ message: "Unauthorized" });
     }
-    // jwt.verify(token,process.env.SECRET_KEY,async(err, decodedToken)=>{
-    //   if (err) {
-    //     return res.status(403).json({ message: "Access Denied" });
-    //   }
-    //   req.user = await prisma.user.findUnique({
-    //     where: { email: decodedToken.user.email }
-    //   });
+    jwt.verify(token,process.env.SECRET_KEY,async(err, decodedToken)=>{
+      if (err) {
+        return res.status(403).json({ message: "Access Denied" });
+      }
+      req.user = await prisma.user.findUnique({
+        where: { email: decodedToken.user.email }
+      });
 
-    //   next()
-    // })
+      next()
+    })
 
-    const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
+    // const decodedToken = jwt.verify(token, process.env.SECRET_KEY);
 
-    req.user = await prisma.user.findUnique({
-      where: { email: decodedToken.user.email },
-    });
-    next();
+    // req.user = await prisma.user.findUnique({
+    //   where: { email: decodedToken.user.email },
+    // });
+    // next();
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
