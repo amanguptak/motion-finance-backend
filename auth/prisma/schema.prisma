@@ -4,6 +4,10 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// If you make changes to your schema, run the following command to update your Prisma Client:
+// npx prisma generate
+
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,6 +23,7 @@ model User {
   firstName String
   lastName  String?
   password  String
+  imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   // Define an index for email field

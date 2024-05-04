@@ -1,5 +1,6 @@
 import prisma from "../config/db.config.js";
 import bcrypt from "bcrypt";
+
 // class UserController{
 //     static async getUser(req,res){
 //        try{
@@ -22,6 +23,13 @@ import bcrypt from "bcrypt";
 //        }
 //     }
 // }
+
+
+
+const uploadToCloud = async(fileBuffer, fileName)=>{
+  const cloudUrl = `https://your-cloud-storage.com/${fileName}`;
+  return cloudUrl;  // Returns URL from the cloud provider
+}
 class UserController {
     static async getUser(req, res) {
       try {
@@ -107,6 +115,32 @@ class UserController {
       }
 
 
+    }
+
+    static async handleImage(req, res){
+      try{
+        if(!req.user || !req.user.email) {
+          return res.status(400).json({ message: "Email not found"})
+        }
+
+        if(!req.file){
+          return res.status(404).json({ message: "No image file provided"})
+        }
+
+        const email = req.user.email;
+        const fileBuffer = req.file.buffer;
+        const fileName =`${req.file.originalname}-${Date.now()}`
+        const imageUrl = await uploadToCloud(fileBuffer,fileName)
+        const updatedUser = await prisma.user.update({
+          where:{email:email},
+          data:{imageUrl:imageUrl}
+        })
+        res.json({ user: updatedUser, message: "Image uploaded successfully" });
+
+      }catch(err){
+        console.log("Error handling image upload", err);
+        res.status(500).json({ message: err.message });
+      }
     }
   }
   

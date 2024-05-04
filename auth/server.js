@@ -3,9 +3,13 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import Routes from "./routes/index.js";
 
+
 import cookieParser from "cookie-parser";
 const app = express();
+
 const PORT = process.env.PORT || 8000;
+
+
 // const corsOptions = {
 //     origin: ['http://localhost:3000'],
 //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -16,6 +20,8 @@ const PORT = process.env.PORT || 8000;
 //   };
  
 // Middlewares
+
+upload.single('profile')
 app.use(cookieParser());
 app.use(express.json());
 
