@@ -10,7 +10,7 @@ const router = Router()
 router.get("/user",verifyToken,UserController.getUser)
 router.put("/user-update",verifyToken,UserController.updateUser)
 router.put("/password-update",verifyToken,UserController.changePassword)
-router.post("/upload-image", verifyToken, upload.single('profile'), UserController.handleImage);
+router.post("/user/upload-image", verifyToken, upload.single('profile'), UserController.handleImage);
 
 
 

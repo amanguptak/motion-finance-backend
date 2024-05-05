@@ -8,7 +8,7 @@ export const verifyToken = async (req, res, next) => {
     }
     jwt.verify(token,process.env.SECRET_KEY,async(err, decodedToken)=>{
       if (err) {
-        return res.status(403).json({ message: "Access Denied" });
+        return res.status(403).json({ message: "Access Denied Please Login" });
       }
       req.user = await prisma.user.findUnique({
         where: { email: decodedToken.user.email }
