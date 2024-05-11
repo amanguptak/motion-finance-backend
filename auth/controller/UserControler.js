@@ -30,6 +30,7 @@ class UserController {
       const email = req.user.email;
       const user = await prisma.user.findUnique({
         where: { email: email },
+        select: { email: true, firstName: true, imageName: true ,lastName: true ,imageUrl: true ,createdAt:true, updatedAt: true},
       });
 
       if (!user) {
@@ -41,7 +42,7 @@ class UserController {
         Key: user.imageName,
       };
       const command = new GetObjectCommand(getObjectParams);
-      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      const url = await getSignedUrl(s3, command, { expiresIn: 1800 });
       user.imageUrl = url;
 
       res.json(user);
@@ -118,7 +119,7 @@ class UserController {
       const email = req.user.email;
       const fileBuffer = req.file.buffer;
       const buffer = await sharp(fileBuffer)
-        .resize({ height: 1920, width: 1080, fit: "contain" })
+        .resize({ height: 500, width: 500, fit: "contain" })
         .toBuffer();
       const imageName = randomImageName();
       const params = {
