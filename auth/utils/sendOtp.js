@@ -53,7 +53,8 @@ export const sendOtp = async ({ email, subject, message, duration = 1 }) => {
         expiresAt: new Date(Date.now() + 600000), // Example: Expires in 1 hr
       },
     });
-    return newOtp;
+    const {otp , ...data} = newOtp;
+    return data;
   } catch (err) {
     console.log("[SEND OTP]", err);
   }
