@@ -15,6 +15,13 @@ class AuthController {
         data: payload,
       });
       sendToken(req, res, user, 201);
+
+
+      const userData = { email: user.email, id: user.id };
+      await req.producer.send({
+        topic: 'user-register',
+        messages: [{ value: JSON.stringify(userData) }],
+      });
       // return res.json({message: "User created successfully",user})
     } catch (err) {
       console.log("Error registering", err);
@@ -39,6 +46,13 @@ class AuthController {
         return res.status(401).json({ message: "Invalid credentials" });
       }
       sendToken(req, res, user, 200);
+          // Produce Kafka message
+      const userData = { email: user.email, id: user.id };
+      await req.producer.send({
+        topic: 'user-login',
+        messages: [{ value: JSON.stringify(userData) }],
+      });
+
     } catch (err) {
       console.log("Error login", err);
       res.status(500).json({ message: "Something went wrong" });
@@ -57,6 +71,12 @@ class AuthController {
         })
         .status(200)
         .json({ success: true, message: "Logged out successfully" });
+         // Produce Kafka message
+      const userData = { email };
+      await req.producer.send({
+        topic: 'user-logout',
+        messages: [{ value: JSON.stringify(userData) }],
+      });
 
       // req.session.destroy();
     } catch (error) {
