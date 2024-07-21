@@ -3,9 +3,8 @@ import bcrypt from "bcrypt";
 import { sendToken } from "../utils/token.js";
 import { sendOtp, verifyOtp } from "../utils/sendOtp.js";
 
-
 class AuthController {
-    static async register(req, res) {
+  static async register(req, res) {
     try {
       const payload = req.body;
       const salt = bcrypt.genSaltSync(10);
@@ -16,10 +15,9 @@ class AuthController {
       });
       sendToken(req, res, user, 201);
 
-
       const userData = { email: user.email, id: user.id };
       await req.producer.send({
-        topic: 'user-register',
+        topic: "user-register",
         messages: [{ value: JSON.stringify(userData) }],
       });
       // return res.json({message: "User created successfully",user})
@@ -28,8 +26,6 @@ class AuthController {
       return res.status(500).json({ message: "Something went wrong" });
     }
   }
-
-
 
   static async login(req, res) {
     try {
@@ -46,23 +42,29 @@ class AuthController {
         return res.status(401).json({ message: "Invalid credentials" });
       }
       sendToken(req, res, user, 200);
-          // Produce Kafka message
+      // Produce Kafka message
       const userData = { email: user.email, id: user.id };
       await req.producer.send({
-        topic: 'user-login',
+        topic: "user-login",
         messages: [{ value: JSON.stringify(userData) }],
       });
-
     } catch (err) {
       console.log("Error login", err);
       res.status(500).json({ message: "Something went wrong" });
     }
   }
 
-
-
   static async logout(req, res) {
     try {
+      const { email } = req.user; // Assuming req.user contains the logged-in user's info
+
+      // Produce Kafka message before sending the response
+      const userData = { email };
+      await req.producer.send({
+        topic: "user-logout",
+        messages: [{ value: JSON.stringify(userData) }],
+      });
+
       res
         .clearCookie("authToken", {
           httpOnly: true,
@@ -71,21 +73,11 @@ class AuthController {
         })
         .status(200)
         .json({ success: true, message: "Logged out successfully" });
-         // Produce Kafka message
-      const userData = { email };
-      await req.producer.send({
-        topic: 'user-logout',
-        messages: [{ value: JSON.stringify(userData) }],
-      });
-
-      // req.session.destroy();
     } catch (error) {
       console.error("Error logging out:", error);
       res.status(500).json({ success: false, message: "Error logging out" });
     }
   }
-
-
 
   static async requestOtp(req, res) {
     try {
@@ -96,7 +88,9 @@ class AuthController {
         },
       });
       if (!user) {
-        return res.status(404).json({ message: "User not found  Please Register" });
+        return res
+          .status(404)
+          .json({ message: "User not found  Please Register" });
       }
       const subject = "Reset-Password OTP";
       const message = "Hi 😀 Reset your account password with code below";
@@ -106,8 +100,6 @@ class AuthController {
       res.status(500).json({ message: error.message });
     }
   }
-
-
 
   static async verifiedOtp(req, res) {
     try {
@@ -120,8 +112,6 @@ class AuthController {
       res.status(400).json({ message: error.message });
     }
   }
-
-
 
   static async resetPassword(req, res) {
     try {
@@ -153,8 +143,6 @@ class AuthController {
       res.status(400).json({ message: error.message });
     }
   }
-
-
 }
 
 export default AuthController;
