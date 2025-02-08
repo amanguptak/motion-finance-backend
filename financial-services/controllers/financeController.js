@@ -34,22 +34,48 @@ export const handleUserLogout = async (userData) => {
   }
 };
 
-export const createUserFinance = async (userId, financeData) => {
+export const createUserFinance = async (req, res) => {
   try {
+    const { userId, financeDetails } = req.body;
+
     if (!loggedInUsers.has(userId)) {
-      throw new Error("User is not logged in");
+      return res.status(403).json({ message: "User is not logged in" });
     }
 
     const userFinance = await prisma.userFinance.create({
       data: {
         userId: userId,
-        financeDetails: financeData,
+        financeDetails: financeDetails,
       },
     });
     console.log(`User finance details created for: ${userId}`);
-    return userFinance;
+    return res.status(201).json(userFinance);
   } catch (error) {
     console.error('Error creating user finance details:', error);
-    throw error;
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateUserFinance = async (req, res) => {
+  try {
+    const { userId, financeDetails } = req.body;
+
+    if (!loggedInUsers.has(userId)) {
+      return res.status(403).json({ message: "User is not logged in" });
+    }
+
+    const updatedUserFinance = await prisma.userFinance.update({
+      where: {
+        userId: userId,
+      },
+      data: {
+        financeDetails: financeDetails,
+      },
+    });
+    console.log(`User finance details updated for: ${userId}`);
+    return res.status(200).json(updatedUserFinance);
+  } catch (error) {
+    console.error('Error updating user finance details:', error);
+    return res.status(500).json({ message: error.message });
   }
 };
